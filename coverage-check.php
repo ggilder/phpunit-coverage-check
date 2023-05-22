@@ -37,7 +37,10 @@ if (! isset($argv[2])) {
     );
 }
 
-$onlyEchoPercentage = isset($argv[3]) && $argv[3] === '--only-percentage';
+$remainingArgs = array_slice($argv, 3);
+
+$onlyEchoPercentage = in_array('--only-percentage', $remainingArgs);
+$calculateByLine = in_array('--coverage-by-lines', $remainingArgs);
 
 $inputFile = $argv[1];
 $percentage = min(100, max(0, (float) $argv[2]));
@@ -59,8 +62,14 @@ foreach (loadMetrics($inputFile) as $metric) {
 }
 
 // See calculation: https://confluence.atlassian.com/pages/viewpage.action?pageId=79986990
-$coveredMetrics = $coveredstatements + $coveredmethods + $coveredconditionals;
-$totalMetrics = $statements + $methods + $conditionals;
+// User may specify --coverage-by-lines to only calculate coverage by line (called "statements" in the XML)
+$coveredMetrics = $coveredstatements;
+$totalMetrics = $statements;
+
+if (!$calculateByLine) {
+    $coveredMetrics += $coveredmethods + $coveredconditionals;
+    $totalMetrics += $methods + $conditionals;
+}
 
 if ($totalMetrics === 0) {
     printStatus('Insufficient data for calculation. Please add more code.', STATUS_ERROR);

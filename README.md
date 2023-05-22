@@ -28,6 +28,14 @@ vendor/bin/coverage-check clover.xml 80 --only-percentage
 
 With the `--only-percentage` enabled, the CLI command will only return the resulting coverage percentage.
 
+## Coverage calculation
+
+By default, coverage is calculated based on conditionals, statements, and methods. To generate a traditional line-based coverage number, use `--coverage-by-lines`.
+
+PHPUnit does not include conditional coverage metrics by default; you must enable it by specifying `--path-coverage` in your phpunit command or [`pathCoverage`](https://docs.phpunit.de/en/9.5/configuration.html#the-pathcoverage-attribute) in your configuration.
+
+# Notes
+
 It's also possible to add the coverage report generation to the `phpunit.xml.dist` add to following lines to the xml file inside the `<coverage>` tag:
 
 ```xml
